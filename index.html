@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Cube with Image Animation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #121212;
+    }
+
+    .cube-wrap {
+      perspective: 1000px;
+      perspective-origin: 50% 50%;
+      position: relative;
+    }
+
+    .cube {
+      scale: .6;
+      background: linear-gradient(45deg, #4a90e2, #f06);
+      transform: scaleX(1) scaleY(1) scaleZ(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) 
+                 translateX(0px) translateY(0px) translateZ(0px) skewX(0deg) skewY(0deg);
+      transition: transform 0.8s ease, background 0.5s ease;
+      filter: brightness(1); /* Efeito inicial de brilho normal */
+    }
+
+    .cube:hover {
+      transform: scaleX(0.8) scaleY(0.8) scaleZ(1) rotateX(54deg) rotateY(2deg) rotateZ(-91deg) 
+                 translateX(0px) translateY(0px) translateZ(0px) skewX(0deg) skewY(0deg);
+      background: linear-gradient(45deg, #f06, #4a90e2);
+    }
+
+    .image {
+      width: 300px;
+      height: 300px;
+      background-image: url('https://via.placeholder.com/80'); /* Substitua pelo caminho da sua imagem */
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="cube-wrap">
+    <img class="cube" src="Image.png"></img>
+    <img class="image" src="homer.png"></img>
+  </div>
+  <script>
+    const cube = document.querySelector('.cube');
+    const image = document.querySelector('.image');
+
+    cube.addEventListener('transitionend', () => {
+      if (cube.matches(':hover')) {
+        // Reduz o brilho do card
+        gsap.to(cube, {
+          duration: 0.5,
+          filter: 'brightness(0.5)',
+          ease: 'power2.out',
+        });
+
+        // Anima a imagem saindo
+        gsap.to(image, {
+          duration: 1,
+          scale: 1,
+          opacity: 1,
+          ease: 'back.out(1.7)',
+        });
+      }
+    });
+
+    cube.addEventListener('mouseleave', () => {
+      // Restaura o brilho do card
+      gsap.to(cube, {
+        duration: 0.5,
+        filter: 'brightness(1)',
+        ease: 'power2.in',
+      });
+
+      // Faz a imagem voltar para dentro
+      gsap.to(image, {
+        duration: 0.8,
+        scale: 0,
+        opacity: 0,
+        ease: 'power2.in',
+      });
+    });
+  </script>
+</body>
+</html>
