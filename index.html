@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Cube with Image Animation</title>
+  <title>Yu-Gi-Oh Card Animation</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <style>
     body {
@@ -13,7 +13,8 @@
       height: 100vh;
       margin: 0;
       background: #121212;
-    }
+      }
+    
 
     .cube-wrap {
       perspective: 1000px;
@@ -21,81 +22,78 @@
       position: relative;
     }
 
-    .cube {
-      scale: .6;
-      background: linear-gradient(45deg, #4a90e2, #f06);
-      transform: scaleX(1) scaleY(1) scaleZ(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) 
-                 translateX(0px) translateY(0px) translateZ(0px) skewX(0deg) skewY(0deg);
-      transition: transform 0.8s ease, background 0.5s ease;
-      filter: brightness(1); /* Efeito inicial de brilho normal */
+    .card {
+      width: 300px;
+      height: 420px;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+      transition: transform 0.8s ease;
+      position: relative;
+      }
+
+    .card-face {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      border-radius: 8px;
     }
 
-    .cube:hover {
-      transform: scaleX(0.8) scaleY(0.8) scaleZ(1) rotateX(54deg) rotateY(2deg) rotateZ(-91deg) 
-                 translateX(0px) translateY(0px) translateZ(0px) skewX(0deg) skewY(0deg);
-      background: linear-gradient(45deg, #f06, #4a90e2);
+    .card-back {
+      background: url('back.png') no-repeat center/cover;
+    }
+
+    .card-front {
+      background: url('./GL/front.png') no-repeat center/cover;
+      transform: rotateY(180deg);
     }
 
     .image {
       width: 300px;
-      height: 300px;
-      background-image: url('https://via.placeholder.com/80'); /* Substitua pelo caminho da sua imagem */
-      background-size: cover;
-      background-position: center;
+      height: auto;
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+      transform: translate(-50%, -50%);
       opacity: 0;
+      filter: drop-shadow(0 0 0px rgba(255, 255, 0, 0));
+      transition: transform 0.5s ease;
+      animation: dynamic-glow .7s infinite;
     }
+
+    @keyframes dynamic-glow {
+      0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 25px rgba(138, 138, 138, 0.6));
+      }
+      50% {
+        filter: drop-shadow(0 0 30px rgb(255, 255, 255)) drop-shadow(0 0 40px rgba(124, 124, 124, 0.8));
+    }
+}
   </style>
 </head>
 <body>
   <div class="cube-wrap">
-    <img class="cube" src="Image.png"></img>
-    <img class="image" src="homer.png"></img>
+    <div class="card">
+      <div class="card-face card-back"></div>
+      <div class="card-face card-front"></div>
+    </div>
+    <img class="image" src="GL/Image.png" alt="Imagem Invocada">
   </div>
   <script>
-    const cube = document.querySelector('.cube');
+    const card = document.querySelector('.card');
+    const front = document.querySelector('.card-front');
     const image = document.querySelector('.image');
-
-    cube.addEventListener('transitionend', () => {
-      if (cube.matches(':hover')) {
-        // Reduz o brilho do card
-        gsap.to(cube, {
-          duration: 0.5,
-          filter: 'brightness(0.5)',
-          ease: 'power2.out',
-        });
-
-        // Anima a imagem saindo
-        gsap.to(image, {
-          duration: 1,
-          scale: 1,
-          opacity: 1,
-          ease: 'back.out(1.7)',
-        });
-      }
+    const timeline = gsap.timeline({
+      defaults: {ease: 'linear'}
     });
 
-    cube.addEventListener('mouseleave', () => {
-      // Restaura o brilho do card
-      gsap.to(cube, {
-        duration: 0.5,
-        filter: 'brightness(1)',
-        ease: 'power2.in',
-      });
+    timeline
+    .to(card, { delay: 1, duration: .6, rotateY: 180 })
+    .fromTo(front, { filter: 'brightness(1)' }, { delay: 2, duration: .7, filter: 'brightness(.3)' })
+    .to(image, { duration: 1, opacity: 1, scale: 1.2 })
+  
 
-      // Faz a imagem voltar para dentro
-      gsap.to(image, {
-        duration: 0.8,
-        scale: 0,
-        opacity: 0,
-        ease: 'power2.in',
-      });
-    });
+    
   </script>
 </body>
 </html>
